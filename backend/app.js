@@ -7,6 +7,7 @@ import jobRouter from "./routes/job.js";
 import notFoundMiddleware from "./middleware/not-found.js";
 import errorHandlerMiddleware from "./middleware/error-handler.js";
 import connectDB from "./db/connect.js";
+import authenticateUser from "./middleware/authentication.js";
 
 const app = express();
 
@@ -18,7 +19,7 @@ app.use(express.json());
 
 //routers
 app.use("/api/v1/auth", authRouter);
-app.use("/api/v1/job", jobRouter);
+app.use("/api/v1/jobs", authenticateUser, jobRouter);
 
 // error handlers
 app.use(notFoundMiddleware);
