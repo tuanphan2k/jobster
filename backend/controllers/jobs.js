@@ -1,3 +1,8 @@
+import { StatusCodes } from "http-status-codes";
+
+import Job from "../models/Job.js";
+import { BadRequestError, NotFoundError } from "../errors/index.js";
+
 const getAllJobs = async (req, res) => {
   res.send("Get all jobs");
 };
@@ -7,7 +12,9 @@ const getJob = async (req, res) => {
 };
 
 const createJob = async (req, res) => {
-  res.json(req.user);
+  req.body.createdBy = req.user._id;
+  const job = await Job.create(req.body);
+  res.status(StatusCodes.CREATED).json(job);
 };
 
 const updateJob = async (req, res) => {
