@@ -5,6 +5,8 @@ import helmet from "helmet";
 import cors from "cors";
 import xss from "xss-clean";
 import rateLimiter from "express-rate-limit";
+import swaggerUI from "swagger-ui-express";
+import YAML from "yamljs";
 
 import authRouter from "./routes/auth.js";
 import jobRouter from "./routes/job.js";
@@ -14,10 +16,11 @@ import connectDB from "./db/connect.js";
 import authenticateUser from "./middleware/authentication.js";
 
 const app = express();
+const swaggerDocument = YAML.load("./swagger.yaml");
 
 dotenv.config();
 
-//middleware
+// extra packages
 app.set("trust proxy", 1);
 app.use(
   rateLimiter({
@@ -25,11 +28,13 @@ app.use(
     max: 100, //limit each IP to 100 requests pre windowMs
   })
 );
+
 app.use(express.json());
 app.use(helmet());
 app.use(cors());
 app.use(xss());
-// extra packages
+
+app.use("/api-docs", swaggerUI.serve, swaggerUI.setup(swaggerDocument));
 
 //routers
 app.use("/api/v1/auth", authRouter);
